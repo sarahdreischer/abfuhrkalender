@@ -6,10 +6,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
   const region = req.query.region;
   const hausNummerId = req.query.hausNummerId;
 
-  const termine: Termin[] = await fetchData<Termin[]>(
-    `https://${region}-abfallapp.regioit.de/abfall-app-${region}/rest/hausnummern/${hausNummerId}/termine`,
-    'GET',
-  );
+  const url = `https://${region}-abfallapp.regioit.de/abfall-app-${region}/rest/hausnummern/${hausNummerId}/termine`;
+
+  const termine: Termin[] = await fetchData<Termin[]>(url, 'GET').catch((err) => {
+    console.log(`Could not fetch 'Termine' data for ${url}`, err);
+    return [];
+  });
 
   res.status(200).json(termine);
 }

@@ -10,6 +10,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     ? `https://${region}-abfallapp.regioit.de/abfall-app-${region}/rest/strassen/${strasseId}/fraktionen`
     : `https://${region}-abfallapp.regioit.de/abfall-app-${region}/rest/fraktionen`;
 
-  const fraktionen = await fetchData<Fraktion[]>(url, 'GET');
+  const fraktionen = await fetchData<Fraktion[]>(url, 'GET').catch((err) => {
+    console.log(`Could not fetch 'Fraktionen' data for ${url}`, err);
+    return [];
+  });
   res.status(200).json(fraktionen);
 }

@@ -9,6 +9,7 @@ interface AppointmentFilter {
   onSelectedOrtId: (id: string | undefined) => void;
   onSelectedStrassenId: (id: string | undefined) => void;
   onSelectedHausNummerId: (id: string | undefined) => void;
+  initialOrtValue?: string;
 }
 
 export function AppointmentFilter({
@@ -18,8 +19,9 @@ export function AppointmentFilter({
   onSelectedOrtId,
   onSelectedStrassenId,
   onSelectedHausNummerId,
+  initialOrtValue,
 }: AppointmentFilter) {
-  const [ortValue, setOrtValue] = useState<string>('');
+  const [ortValue, setOrtValue] = useState<string>(initialOrtValue || '');
   const [strasseValue, setStrasseValue] = useState<string>('');
   const [hausNummerValue, setHausNummerValue] = useState<string>('');
 

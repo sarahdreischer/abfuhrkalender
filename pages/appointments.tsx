@@ -1,30 +1,10 @@
 import React from 'react';
 import { AppointmentsPage } from '../containers';
-import { Ort, Orte, Region } from '../types';
+import { Ort, Orte } from '../types';
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
 import { fetchData } from '../utils/fetcher';
-
-const regionen: Region[] = [
-  'aachen',
-  'zew2',
-  'aw-bgl2',
-  'bav',
-  'din',
-  'dorsten',
-  'gt2',
-  'hlv',
-  'coe',
-  'krhs',
-  'pi',
-  'krwaf',
-  'lindlar',
-  'stl',
-  'nds',
-  'nuernberg',
-  'roe',
-  'solingen',
-  'wml2',
-];
+import { regionen } from '../data/regionen';
+import { useRouter } from 'next/router';
 
 export async function getServerSideProps({ res }: GetServerSidePropsContext) {
   res.setHeader('Cache-Control', 'public, s-maxage=86400, stale-while-revalidate=59');
@@ -51,5 +31,7 @@ export async function getServerSideProps({ res }: GetServerSidePropsContext) {
 export default function Appointments({
   orte,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  return <AppointmentsPage orte={orte} />;
+  const router = useRouter();
+
+  return <AppointmentsPage orte={orte} ortId={router.query.ortId as string} />;
 }
