@@ -33,6 +33,7 @@ export function AppointmentFilter({
 
   function onStrasseInuptChange() {
     onSelectedStrassenId(undefined);
+    onSelectedHausNummerId(undefined);
     setHausNummerValue('');
   }
 

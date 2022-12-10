@@ -9,48 +9,13 @@ import {
   fetchStrassen,
   fetchTermineFuerHausnummer,
 } from '../../utils/fetcher';
-import { isAfter, isToday, parse } from 'date-fns';
+import { AppointmentFilter } from './components/AppointmentFilter';
+import { getRegionFromOrt, mapTermineToCollectionItemProps } from './utils';
 import cn from 'classnames';
 import styles from './Appointments.module.scss';
-import { AppointmentFilter } from './components/AppointmentFilter';
 
 interface AppointmentsPageProps {
   orte: Orte;
-}
-
-function getRegionFromOrt(ortId: string, orte: Orte): Region {
-  return Object.entries(orte).filter((ortsMap) => {
-    return ortsMap[1].find((ort) => ort.id === ortId);
-  })[0][0];
-}
-
-function mapToCollectionItem(termine: Termin[], fraktionen: Fraktion[]): CollectionItemProps[] {
-  return termine
-    .map(({ bezirk, datum }) => ({
-      fraktion: fraktionen.find((f) => f.id === bezirk.fraktionId),
-      date: parse(datum, 'yyyy-MM-dd', new Date()),
-    }))
-    .filter(({ fraktion }) => fraktion !== undefined)
-    .map(({ fraktion, date }) => ({ fraktion: fraktion!, date }));
-}
-
-function filterFutureCollectionItems(items: CollectionItemProps[]): CollectionItemProps[] {
-  return items.filter(({ fraktion, date }) => {
-    return fraktion && (isToday(date) || isAfter(date, new Date()));
-  });
-}
-
-function sortCollectionItemByDate(items: CollectionItemProps[]): CollectionItemProps[] {
-  return items.sort((itemA, itemB) => itemA.date.getTime() - itemB.date.getTime());
-}
-
-function mapToCollectionItemProps(
-  termine: Termin[],
-  fraktionen: Fraktion[],
-): CollectionItemProps[] {
-  const items = mapToCollectionItem(termine, fraktionen);
-  const futureItems = filterFutureCollectionItems(items);
-  return sortCollectionItemByDate(futureItems);
 }
 
 export function AppointmentsPage({ orte }: AppointmentsPageProps) {
@@ -66,7 +31,12 @@ export function AppointmentsPage({ orte }: AppointmentsPageProps) {
 
   const alleOrte: Ort[] = Object.values(orte).flat();
   const requiredFieldsSelected = ortId && strasseId && hausNummerId;
-  const collectionItemProps: CollectionItemProps[] = mapToCollectionItemProps(termine, fraktionen);
+  const collectionItemProps: CollectionItemProps[] = mapTermineToCollectionItemProps(
+    termine,
+    fraktionen,
+  );
+  const selectedStreetName = strassen.find(({ id }) => id === strasseId)?.name || '';
+  const selectedHouseNumber = hausNummern.find(({ id }) => id === hausNummerId)?.nr || '';
 
   const getRegion = (id: string) => getRegionFromOrt(id, orte);
 
@@ -75,8 +45,13 @@ export function AppointmentsPage({ orte }: AppointmentsPageProps) {
       const _region = getRegion(ortId);
       setRegion(_region);
 
-      fetchAllFraktionen(_region).then(setFraktionen);
-      fetchStrassen(_region, ortId).then(setStrassen);
+      if (_region) {
+        fetchAllFraktionen(_region).then(setFraktionen);
+        fetchStrassen(_region, ortId).then(setStrassen);
+      }
+    } else {
+      clearRegion();
+      clearHausNummern();
     }
   }, [ortId]);
 
@@ -84,6 +59,8 @@ export function AppointmentsPage({ orte }: AppointmentsPageProps) {
     if (strasseId && region) {
       fetchFraktionenFuerStrasse(region, strasseId).then(setFraktionen);
       fetchHausNummernFuerStrasse(region, strasseId).then(setHausNummern);
+    } else {
+      clearHausNummern();
     }
   }, [strasseId]);
 
@@ -93,8 +70,16 @@ export function AppointmentsPage({ orte }: AppointmentsPageProps) {
     }
   }, [hausNummerId]);
 
+  function clearRegion() {
+    setRegion(undefined);
+  }
+
+  function clearHausNummern() {
+    setHausNummern([]);
+  }
+
   return (
-    <div className='d-flex h-100 w-100 py-5 px-4'>
+    <div className={cn('h-100 w-100 py-5 px-4 container-lg', styles.container)}>
       <div className={cn(styles.sidebar, 'me-3')}>
         <Card title='Filter'>
           <AppointmentFilter
@@ -108,13 +93,12 @@ export function AppointmentsPage({ orte }: AppointmentsPageProps) {
         </Card>
       </div>
       <div className='flex-grow-1'>
-        <Card title='Ihr nächster Abholungstermin'>
+        <Card className='overflow-auto' title='Ihr nächster Abholungstermin'>
           {!requiredFieldsSelected && <div>Bitte wählen Sie Stadt, Straße und Hausnummer aus</div>}
           {requiredFieldsSelected && collectionItemProps.length > 0 && (
             <>
               <div className='h6 pb-3 text-primary'>
-                {strassen.find(({ id }) => id === strasseId)?.name || ''}{' '}
-                {hausNummern.find(({ id }) => id === hausNummerId)?.nr || ''}
+                {selectedStreetName} {selectedHouseNumber}
               </div>
               {collectionItemProps.map(({ fraktion, date }, i) => (
                 <div key={i}>

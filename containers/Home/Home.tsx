@@ -11,7 +11,7 @@ export function HomePage(props: HomeProps) {
   }
 
   return (
-    <div className='d-flex flex-column align-items-center justify-content-center h-100'>
+    <div className='d-flex flex-column align-items-center justify-content-center h-100 container-xxl'>
       <div className='w-50'>
         <div className='h2 text-center pb-5'>Ihr Abfuhrkalender</div>
 

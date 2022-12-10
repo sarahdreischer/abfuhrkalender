@@ -1,3 +1,15 @@
 .main {
   background: linear-gradient(to bottom, #004797 0%, #004797 30%, #fff 30%, #ddd 100%);
 }
+
+@media (min-width: 540px) {
+  .container {
+    overflow: hidden;
+  }
+}
+
+@media (max-width: 540px) {
+  .container {
+    overflow: visible;
+  }
+}

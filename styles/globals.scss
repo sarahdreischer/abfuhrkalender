@@ -14,12 +14,7 @@ div#__next > div {
   max-height: 100vh;
 }
 
-// @media (prefers-color-scheme: light) {
-//   html {
-//     color-scheme: light;
-//   }
-//   body {
-//     color: white;
-//     background: black;
-//   }
-// }
+.react-datalist-input__listbox {
+  max-height: 200px;
+  overflow: auto;
+}
