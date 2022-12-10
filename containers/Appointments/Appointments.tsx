@@ -16,18 +16,19 @@ import styles from './Appointments.module.scss';
 
 interface AppointmentsPageProps {
   orte: Orte;
+  ortId?: string;
 }
 
-export function AppointmentsPage({ orte }: AppointmentsPageProps) {
+export function AppointmentsPage({ orte, ortId: initialOrtId }: AppointmentsPageProps) {
   const [region, setRegion] = useState<Region>();
   const [strassen, setStrassen] = useState<Strasse[]>([]);
   const [fraktionen, setFraktionen] = useState<Fraktion[]>([]);
   const [hausNummern, setHausNummern] = useState<HausNummer[]>([]);
   const [termine, setTermine] = useState<Termin[]>([]);
 
-  const [ortId, setOrtId] = useState<string>();
-  const [strasseId, setStrasseId] = useState<string>();
-  const [hausNummerId, setHausNummerId] = useState<string>();
+  const [ortId, setOrtId] = useState<string | undefined>(initialOrtId);
+  const [strasseId, setStrasseId] = useState<string | undefined>();
+  const [hausNummerId, setHausNummerId] = useState<string | undefined>();
 
   const alleOrte: Ort[] = Object.values(orte).flat();
   const requiredFieldsSelected = ortId && strasseId && hausNummerId;
@@ -89,20 +90,26 @@ export function AppointmentsPage({ orte }: AppointmentsPageProps) {
             onSelectedOrtId={setOrtId}
             onSelectedStrassenId={setStrasseId}
             onSelectedHausNummerId={setHausNummerId}
+            initialOrtValue={alleOrte.find((ort) => ort.id == initialOrtId)?.name}
           />
         </Card>
       </div>
       <div className='flex-grow-1'>
         <Card
           className='overflow-auto'
-          title='Ihr nächster Abholungstermin'
+          title='Ihre nächsten Abholungstermine'
           subtitle={
             requiredFieldsSelected && collectionItemProps.length > 0
               ? `${selectedStreetName} ${selectedHouseNumber}`
               : undefined
           }
         >
-          {!requiredFieldsSelected && <div>Bitte wählen Sie Stadt, Straße und Hausnummer aus</div>}
+          {!requiredFieldsSelected && (
+            <div>
+              Bitte wählen Sie <strong>Stadt</strong>, <strong>Straße</strong> und{' '}
+              <strong>Hausnummer</strong> aus
+            </div>
+          )}
           {requiredFieldsSelected && collectionItemProps.length > 0 && (
             <>
               {collectionItemProps.map(({ fraktion, date }, i) => (

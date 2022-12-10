@@ -6,10 +6,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
   const region = req.query.region;
   const strasseId = req.query.strasseId;
 
-  const hausNummern: HausNummer[] = await fetchData<Strasse>(
-    `https://${region}-abfallapp.regioit.de/abfall-app-${region}/rest/strassen/${strasseId}`,
-    'GET',
-  ).then((strasse) => strasse.hausNrList);
+  const url = `https://${region}-abfallapp.regioit.de/abfall-app-${region}/rest/strassen/${strasseId}`;
+
+  const hausNummern: HausNummer[] = await fetchData<Strasse>(url, 'GET')
+    .then((strasse) => strasse.hausNrList)
+    .catch((err) => {
+      console.log(`Could not fetch 'Hausnummer' data for ${url}`, err);
+      return [];
+    });
 
   res.status(200).json(hausNummern);
 }

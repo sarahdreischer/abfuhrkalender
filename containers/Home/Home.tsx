@@ -1,13 +1,23 @@
 import { useRouter } from 'next/router';
-import React from 'react';
+import React, { useState } from 'react';
+import { Datalist } from '../../components';
+import { Orte } from '../../types';
 
-interface HomeProps {}
+interface HomeProps {
+  orte: Orte;
+}
 
-export function HomePage(props: HomeProps) {
+export function HomePage({ orte }: HomeProps) {
+  const [ortId, setOrtId] = useState<string>();
+  const [ortValue, setOrtValue] = useState('');
   const router = useRouter();
 
+  const alleOrte = Object.values(orte).flat();
+
   function onSearchSubmit() {
-    router.push('/appointments');
+    if (ortId) {
+      router.push({ pathname: '/appointments', query: { ortId } });
+    }
   }
 
   return (
@@ -15,16 +25,22 @@ export function HomePage(props: HomeProps) {
       <div className='w-50'>
         <div className='h2 text-center pb-5'>Ihr Abfuhrkalender</div>
 
-        <form className='d-flex'>
-          <input
-            className='flex-grow-1 form-control me-2'
-            type='search'
-            placeholder='Bitte geben Sie eine Stadt ein'
-          />
+        <div className='d-flex'>
+          <div className='flex-grow-1 me-2'>
+            <Datalist
+              className='h-100'
+              placeholder='Bitte geben Sie eine Stadt ein'
+              value={ortValue}
+              setValue={setOrtValue}
+              onInputChange={() => setOrtId(undefined)}
+              onSelect={setOrtId}
+              items={alleOrte.map(({ id, name }) => ({ id, value: name }))}
+            />
+          </div>
           <button className='btn btn-outline-success' type='submit' onClick={onSearchSubmit}>
             Suchen
           </button>
-        </form>
+        </div>
       </div>
     </div>
   );
