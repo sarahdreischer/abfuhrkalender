@@ -11,6 +11,7 @@ body > div:first-child,
 div#__next,
 div#__next > div {
   height: 100%;
+  max-height: 100vh;
 }
 
 // @media (prefers-color-scheme: light) {

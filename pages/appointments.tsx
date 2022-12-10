@@ -1,18 +1,55 @@
 import React from 'react';
 import { AppointmentsPage } from '../containers';
-import orte from '../public/beispiel-orte-data.json';
-import strassen from '../public/beispiel-strassen-data.json';
-import hausNummern from '../public/beispiel-hausnummern-data.json';
-import fraktionen from '../public/beispiel-fraktionen-data.json';
-import { Fraktion, HausNummer, Ort, Strasse } from '../types';
+import { Ort, Orte, Region } from '../types';
+import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
+import { fetchData } from '../utils/fetcher';
 
-export default function Appointments() {
-  return (
-    <AppointmentsPage
-      orte={orte as unknown[] as Ort[]}
-      strassen={strassen as unknown[] as Strasse[]}
-      hausNummern={hausNummern.hausNrList as unknown[] as HausNummer[]}
-      fraktionen={fraktionen as unknown[] as Fraktion[]}
-    />
+const regionen: Region[] = [
+  'aachen',
+  'zew2',
+  'aw-bgl2',
+  'bav',
+  'din',
+  'dorsten',
+  'gt2',
+  'hlv',
+  'coe',
+  'krhs',
+  'pi',
+  'krwaf',
+  'lindlar',
+  'stl',
+  'nds',
+  'nuernberg',
+  'roe',
+  'solingen',
+  'wml2',
+];
+
+export async function getServerSideProps({ res }: GetServerSidePropsContext) {
+  res.setHeader('Cache-Control', 'public, s-maxage=86400, stale-while-revalidate=59');
+
+  const getOrte = regionen.map((region) =>
+    fetchData<Ort[]>(`http://localhost:3000/api/orte?region=${region}`, 'GET').then((ortsList) => ({
+      region,
+      ortsList,
+    })),
   );
+
+  const results = await Promise.all(getOrte);
+
+  return {
+    props: {
+      orte: results.reduce((alleOrte, pair) => {
+        alleOrte[pair.region] = pair.ortsList;
+        return alleOrte;
+      }, {} as Orte),
+    },
+  };
+}
+
+export default function Appointments({
+  orte,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) {
+  return <AppointmentsPage orte={orte} />;
 }

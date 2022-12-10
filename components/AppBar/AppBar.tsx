@@ -17,10 +17,14 @@ export function AppBar({ pages }: AppBarProps) {
     setActivePageIndex(index);
   }, [router.asPath]);
 
+  function onLogoClick() {
+    router.push('/');
+  }
+
   return (
     <nav className='navbar navbar-expand-lg bg-transparent'>
       <div className='container-fluid'>
-        <a className='navbar-brand' href='#'>
+        <a className='navbar-brand' href='#' onClick={onLogoClick}>
           Your Local Garbage Collection
         </a>
         <button

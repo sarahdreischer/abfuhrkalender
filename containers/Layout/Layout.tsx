@@ -15,9 +15,9 @@ const pages: Page[] = [
 
 export function Layout({ children }: LayoutProps) {
   return (
-    <div className='d-flex flex-column h-100'>
+    <div className='d-flex flex-column h-100 mh-100'>
       <AppBar pages={pages} />
-      <div className={cn('flex-grow-1', styles.main)}>{children}</div>
+      <div className={cn('flex-grow-1 mh-100', styles.main)}>{children}</div>
     </div>
   );
 }
