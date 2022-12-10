@@ -28,7 +28,7 @@ export function Datalist({
       placeholder={placeholder + (required ? '*' : '')}
       label={label}
       onSelect={(item) => onSelect(item.id)}
-      onChange={(e) => onInputChange(e.target.value)}
+      onChange={(e: any) => onInputChange(e.target.value)}
       items={items}
     />
   );
