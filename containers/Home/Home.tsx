@@ -1,7 +1,9 @@
+import { useState } from 'react';
 import { useRouter } from 'next/router';
-import React, { useState } from 'react';
 import { Datalist } from '../../components';
 import { Orte } from '../../types';
+import cn from 'classnames';
+import styles from './Home.module.scss';
 
 interface HomeProps {
   orte: Orte;
@@ -22,11 +24,11 @@ export function HomePage({ orte }: HomeProps) {
 
   return (
     <div className='d-flex flex-column align-items-center justify-content-center h-100 container-xxl'>
-      <div className='w-50'>
+      <div className={styles.container}>
         <div className='h2 text-center pb-5'>Ihr Abfuhrkalender</div>
 
-        <div className='d-flex'>
-          <div className='flex-grow-1 me-2'>
+        <div className={styles.form}>
+          <div className={cn('flex-grow-1', styles.formSearchField)}>
             <Datalist
               className='h-100'
               placeholder='Bitte geben Sie eine Stadt ein'
@@ -37,9 +39,11 @@ export function HomePage({ orte }: HomeProps) {
               items={alleOrte.map(({ id, name }) => ({ id, value: name }))}
             />
           </div>
-          <button className='btn btn-outline-success' type='submit' onClick={onSearchSubmit}>
-            Suchen
-          </button>
+          <div>
+            <button className='btn btn-outline-success' type='submit' onClick={onSearchSubmit}>
+              Suchen
+            </button>
+          </div>
         </div>
       </div>
     </div>

@@ -1,4 +1,31 @@
-.homeContainer {
-  display: grid;
-  grid-template-columns: 1fr 2fr;
+@media (min-width: 540px) {
+  .container {
+    width: 50%;
+  }
+
+  .form {
+    display: flex;
+  }
+
+  .formSearchField {
+    margin-right: 12px;
+  }
+}
+
+@media (max-width: 540px) {
+  .container {
+    width: 80%;
+  }
+
+  .form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .formSearchField {
+    margin-bottom: 12px;
+    height: 40px;
+    width: 100%;
+  }
 }
