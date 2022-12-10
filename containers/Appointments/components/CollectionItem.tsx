@@ -17,7 +17,7 @@ export function CollectionItem({ fraktion, date }: CollectionItemProps) {
         <div className='ms-2'>
           <div>
             <strong>Abfallsorte: </strong>
-            {fraktion.name} Collection
+            {fraktion.name}
           </div>
           <div>
             <strong>Nächster Abholungstermin: </strong>

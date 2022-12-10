@@ -1,3 +1,21 @@
-.sidebar {
-  width: 300px;
+@media (min-width: 540px) {
+  .container {
+    display: flex;
+  }
+
+  .sidebar {
+    width: 300px;
+  }
+}
+
+@media (max-width: 540px) {
+  .container {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    margin-bottom: 12px;
+  }
 }
