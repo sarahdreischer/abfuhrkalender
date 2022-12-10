@@ -21,7 +21,7 @@ export function AppBar({ pages }: AppBarProps) {
     <nav className='navbar navbar-expand-lg bg-transparent'>
       <div className='container-fluid'>
         <a className='navbar-brand' href='#'>
-          GBC
+          Your Local Garbage Collection
         </a>
         <button
           className='navbar-toggler'

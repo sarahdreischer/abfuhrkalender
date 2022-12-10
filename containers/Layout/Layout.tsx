@@ -10,7 +10,7 @@ interface LayoutProps {
 
 const pages: Page[] = [
   { route: '/', title: 'Home' },
-  { route: '/appointments', title: 'Find Garbage Collectors' },
+  { route: '/appointments', title: 'Appointments' },
 ];
 
 export function Layout({ children }: LayoutProps) {
