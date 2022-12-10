@@ -1,4 +1,4 @@
-import { InferGetServerSidePropsType } from 'next';
+import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
 import { HomePage } from '../containers';
 import { regionen } from '../data/regionen';
 import { Ort, Orte } from '../types';
