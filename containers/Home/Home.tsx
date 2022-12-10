@@ -13,12 +13,16 @@ export function HomePage(props: HomeProps) {
   return (
     <div className='d-flex flex-column align-items-center justify-content-center h-100'>
       <div className='w-50'>
-        <div className='h2 text-center pb-5'>Find out when your Garbage is next collected </div>
+        <div className='h2 text-center pb-5'>Ihr Abfuhrkalender</div>
 
         <form className='d-flex'>
-          <input className='flex-grow-1 form-control me-2' type='search' placeholder='Postcode' />
+          <input
+            className='flex-grow-1 form-control me-2'
+            type='search'
+            placeholder='Bitte geben Sie eine Stadt ein'
+          />
           <button className='btn btn-outline-success' type='submit' onClick={onSearchSubmit}>
-            Search
+            Suchen
           </button>
         </form>
       </div>

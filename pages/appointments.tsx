@@ -30,10 +30,10 @@ export async function getServerSideProps({ res }: GetServerSidePropsContext) {
   res.setHeader('Cache-Control', 'public, s-maxage=86400, stale-while-revalidate=59');
 
   const getOrte = regionen.map((region) =>
-    fetchData<Ort[]>(`http://localhost:3000/api/orte?region=${region}`, 'GET').then((ortsList) => ({
-      region,
-      ortsList,
-    })),
+    fetchData<Ort[]>(
+      `https://${region}-abfallapp.regioit.de/abfall-app-${region}/rest/orte`,
+      'GET',
+    ).then((ortsList) => ({ region, ortsList })),
   );
 
   const results = await Promise.all(getOrte);

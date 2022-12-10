@@ -25,7 +25,7 @@ export function AppBar({ pages }: AppBarProps) {
     <nav className='navbar navbar-expand-lg bg-transparent'>
       <div className='container-fluid'>
         <a className='navbar-brand' href='#' onClick={onLogoClick}>
-          Your Local Garbage Collection
+          Abfuhrkalender
         </a>
         <button
           className='navbar-toggler'

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Card, Datalist } from '../../components';
-import { CollectionItem } from './components/CollectionItem';
+import { CollectionItem, CollectionItemProps } from './components/CollectionItem';
 import { Fraktion, HausNummer, Ort, Orte, Region, Strasse, Termin } from '../../types';
 import {
   fetchAllFraktionen,
@@ -23,6 +23,24 @@ function getRegionFromOrt(ortId: string, orte: Orte): Region {
   })[0][0];
 }
 
+function mapToCollectionItemProps(
+  termine: Termin[],
+  fraktionen: Fraktion[],
+): CollectionItemProps[] {
+  return termine
+    .map(({ bezirk, datum }) => ({
+      fraktion: fraktionen.find((f) => f.id === bezirk.fraktionId),
+      date: parse(datum, 'yyyy-MM-dd', new Date()),
+    }))
+    .filter(({ fraktion, date }) => {
+      return fraktion && (isToday(date) || isAfter(date, new Date()));
+    })
+    .map(({ fraktion, date }) => ({
+      fraktion: fraktion!,
+      date,
+    }));
+}
+
 export function AppointmentsPage({ orte }: AppointmentsPageProps) {
   const [region, setRegion] = useState<Region>();
   const [strassen, setStrassen] = useState<Strasse[]>([]);
@@ -36,6 +54,7 @@ export function AppointmentsPage({ orte }: AppointmentsPageProps) {
 
   const alleOrte: Ort[] = Object.values(orte).flat();
   const requiredFieldsSelected = ortId && strasseId && hausNummerId;
+  const collectionItemProps: CollectionItemProps[] = mapToCollectionItemProps(termine, fraktionen);
 
   const getRegion = (id: string) => getRegionFromOrt(id, orte);
 
@@ -65,10 +84,10 @@ export function AppointmentsPage({ orte }: AppointmentsPageProps) {
   return (
     <div className='d-flex h-100 w-100 py-5 px-4'>
       <div className={cn(styles.sidebar, 'me-3')}>
-        <Card title='Filters'>
+        <Card title='Filter'>
           <div className='mb-2'>
             <Datalist
-              label='Ort'
+              label='Stadt'
               items={alleOrte.map(({ id, name }) => ({ id, value: name }))}
               required
               onSelect={setOrtId}
@@ -77,7 +96,7 @@ export function AppointmentsPage({ orte }: AppointmentsPageProps) {
           </div>
           <div className='mb-2'>
             <Datalist
-              label='Strasse'
+              label='Straße'
               items={strassen.map(({ id, name }) => ({
                 id,
                 value: name,
@@ -102,25 +121,24 @@ export function AppointmentsPage({ orte }: AppointmentsPageProps) {
         </Card>
       </div>
       <div className='flex-grow-1'>
-        <Card title='Your bin collection days'>
-          {!requiredFieldsSelected && <div>Please apply a filter</div>}
-          {requiredFieldsSelected && (
+        <Card title='Ihr nächster Abholungstermin'>
+          {!requiredFieldsSelected && <div>Bitte wählen Sie Stadt, Straße und Hausnummer aus</div>}
+          {requiredFieldsSelected && collectionItemProps.length > 0 && (
             <>
-              {termine
-                .map(({ bezirk, datum }) => ({
-                  fraktion: fraktionen.find((f) => f.id === bezirk.fraktionId),
-                  date: parse(datum, 'yyyy-MM-dd', new Date()),
-                }))
-                .filter(({ fraktion, date }) => {
-                  return fraktion !== undefined && (isToday(date) || isAfter(date, new Date()));
-                })
-                .map(({ fraktion, date }, i) => (
-                  <div key={i}>
-                    <CollectionItem fraktion={fraktion!} date={date} />
-                    <hr />
-                  </div>
-                ))}
+              <div className='h6 pb-3 text-primary'>
+                {strassen.find(({ id }) => id === strasseId)?.name || ''}{' '}
+                {hausNummern.find(({ id }) => id === hausNummerId)?.nr || ''}
+              </div>
+              {collectionItemProps.map(({ fraktion, date }, i) => (
+                <div key={i}>
+                  <CollectionItem fraktion={fraktion!} date={date} />
+                  {i < collectionItemProps.length - 1 && <hr />}
+                </div>
+              ))}
             </>
+          )}
+          {requiredFieldsSelected && collectionItemProps.length === 0 && (
+            <div>Es ist leider kein Termin verfügbar</div>
           )}
         </Card>
       </div>
