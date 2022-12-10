@@ -93,13 +93,18 @@ export function AppointmentsPage({ orte }: AppointmentsPageProps) {
         </Card>
       </div>
       <div className='flex-grow-1'>
-        <Card className='overflow-auto' title='Ihr nächster Abholungstermin'>
+        <Card
+          className='overflow-auto'
+          title='Ihr nächster Abholungstermin'
+          subtitle={
+            requiredFieldsSelected && collectionItemProps.length > 0
+              ? `${selectedStreetName} ${selectedHouseNumber}`
+              : undefined
+          }
+        >
           {!requiredFieldsSelected && <div>Bitte wählen Sie Stadt, Straße und Hausnummer aus</div>}
           {requiredFieldsSelected && collectionItemProps.length > 0 && (
             <>
-              <div className='h6 pb-3 text-primary'>
-                {selectedStreetName} {selectedHouseNumber}
-              </div>
               {collectionItemProps.map(({ fraktion, date }, i) => (
                 <div key={i}>
                   <CollectionItem fraktion={fraktion!} date={date} />
