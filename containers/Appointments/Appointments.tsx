@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Card, Datalist } from '../../components';
+import { Card } from '../../components';
 import { CollectionItem, CollectionItemProps } from './components/CollectionItem';
 import { Fraktion, HausNummer, Ort, Orte, Region, Strasse, Termin } from '../../types';
 import {
@@ -12,6 +12,7 @@ import {
 import { isAfter, isToday, parse } from 'date-fns';
 import cn from 'classnames';
 import styles from './Appointments.module.scss';
+import { AppointmentFilter } from './components/AppointmentFilter';
 
 interface AppointmentsPageProps {
   orte: Orte;
@@ -23,22 +24,33 @@ function getRegionFromOrt(ortId: string, orte: Orte): Region {
   })[0][0];
 }
 
-function mapToCollectionItemProps(
-  termine: Termin[],
-  fraktionen: Fraktion[],
-): CollectionItemProps[] {
+function mapToCollectionItem(termine: Termin[], fraktionen: Fraktion[]): CollectionItemProps[] {
   return termine
     .map(({ bezirk, datum }) => ({
       fraktion: fraktionen.find((f) => f.id === bezirk.fraktionId),
       date: parse(datum, 'yyyy-MM-dd', new Date()),
     }))
-    .filter(({ fraktion, date }) => {
-      return fraktion && (isToday(date) || isAfter(date, new Date()));
-    })
-    .map(({ fraktion, date }) => ({
-      fraktion: fraktion!,
-      date,
-    }));
+    .filter(({ fraktion }) => fraktion !== undefined)
+    .map(({ fraktion, date }) => ({ fraktion: fraktion!, date }));
+}
+
+function filterFutureCollectionItems(items: CollectionItemProps[]): CollectionItemProps[] {
+  return items.filter(({ fraktion, date }) => {
+    return fraktion && (isToday(date) || isAfter(date, new Date()));
+  });
+}
+
+function sortCollectionItemByDate(items: CollectionItemProps[]): CollectionItemProps[] {
+  return items.sort((itemA, itemB) => itemA.date.getTime() - itemB.date.getTime());
+}
+
+function mapToCollectionItemProps(
+  termine: Termin[],
+  fraktionen: Fraktion[],
+): CollectionItemProps[] {
+  const items = mapToCollectionItem(termine, fraktionen);
+  const futureItems = filterFutureCollectionItems(items);
+  return sortCollectionItemByDate(futureItems);
 }
 
 export function AppointmentsPage({ orte }: AppointmentsPageProps) {
@@ -85,39 +97,14 @@ export function AppointmentsPage({ orte }: AppointmentsPageProps) {
     <div className='d-flex h-100 w-100 py-5 px-4'>
       <div className={cn(styles.sidebar, 'me-3')}>
         <Card title='Filter'>
-          <div className='mb-2'>
-            <Datalist
-              label='Stadt'
-              items={alleOrte.map(({ id, name }) => ({ id, value: name }))}
-              required
-              onSelect={setOrtId}
-              onInputChange={() => setOrtId(undefined)}
-            />
-          </div>
-          <div className='mb-2'>
-            <Datalist
-              label='Straße'
-              items={strassen.map(({ id, name }) => ({
-                id,
-                value: name,
-              }))}
-              required
-              onSelect={setStrasseId}
-              onInputChange={() => setStrasseId(undefined)}
-            />
-          </div>
-          <div className='mb-2'>
-            <Datalist
-              label='Hausnummer'
-              items={hausNummern.map(({ id, nr }) => ({
-                id,
-                value: nr,
-              }))}
-              required
-              onSelect={setHausNummerId}
-              onInputChange={() => setHausNummerId(undefined)}
-            />
-          </div>
+          <AppointmentFilter
+            orte={alleOrte}
+            strassen={strassen}
+            hausNummern={hausNummern}
+            onSelectedOrtId={setOrtId}
+            onSelectedStrassenId={setStrasseId}
+            onSelectedHausNummerId={setHausNummerId}
+          />
         </Card>
       </div>
       <div className='flex-grow-1'>

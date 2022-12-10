@@ -1,3 +1,4 @@
+import { Dispatch, SetStateAction, useState } from 'react';
 import DatalistInput from 'react-datalist-input';
 import 'react-datalist-input/dist/styles.css';
 
@@ -7,6 +8,8 @@ export interface DatalistItem {
 }
 
 interface DatalistProps {
+  value: string;
+  setValue: Dispatch<SetStateAction<string>>;
   label: string;
   items: DatalistItem[];
   onSelect: (id: string) => void;
@@ -16,6 +19,8 @@ interface DatalistProps {
 }
 
 export function Datalist({
+  value,
+  setValue,
   label,
   items,
   onSelect,
@@ -25,8 +30,10 @@ export function Datalist({
 }: DatalistProps) {
   return (
     <DatalistInput
-      placeholder={placeholder + (required ? '*' : '')}
-      label={label}
+      value={value}
+      setValue={setValue}
+      placeholder={placeholder}
+      label={label + (required ? '*' : '')}
       onSelect={(item) => onSelect(item.id)}
       onChange={(e: any) => onInputChange(e.target.value)}
       items={items}
