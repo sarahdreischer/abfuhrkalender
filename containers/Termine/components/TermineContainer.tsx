@@ -1,28 +1,25 @@
 import { Card, LoadingSpinner } from '../../../components';
 import { Fraktion, HausNummer, Strasse, Termin } from '../../../types';
-import { mapTermineToCollectionItemProps } from '../utils/map-to-collection-items';
-import { CollectionItem, CollectionItemProps } from './CollectionItem';
+import { mapTermineToTermineRowProps } from '../utils/map-to-termine-rows';
+import { TermineRow, TermineRowProps } from './TermineRow';
 
-interface AvailableAppointmentsProps {
+interface TermineContainerProps {
   termine: Termin[];
   fraktionen: Fraktion[];
   loading: boolean;
-  selectedStreet?: Strasse;
-  selectedHouseNumber?: HausNummer;
+  selectedStrasse?: Strasse;
+  selectedHausNummer?: HausNummer;
 }
 
-export function AvailableAppointments({
+export function TermineContainer({
   termine,
   fraktionen,
   loading,
-  selectedStreet,
-  selectedHouseNumber,
-}: AvailableAppointmentsProps) {
-  const requiredFieldsSelected = selectedStreet && selectedHouseNumber;
-  const collectionItemProps: CollectionItemProps[] = mapTermineToCollectionItemProps(
-    termine,
-    fraktionen,
-  );
+  selectedStrasse,
+  selectedHausNummer,
+}: TermineContainerProps) {
+  const requiredFieldsSelected = selectedStrasse && selectedHausNummer;
+  const collectionItemProps: TermineRowProps[] = mapTermineToTermineRowProps(termine, fraktionen);
 
   return (
     <Card
@@ -30,7 +27,7 @@ export function AvailableAppointments({
       title='Ihre nächsten Abholungstermine'
       subtitle={
         requiredFieldsSelected && collectionItemProps.length > 0
-          ? `${selectedStreet?.name || ''} ${selectedHouseNumber?.nr || ''}`
+          ? `${selectedStrasse?.name || ''} ${selectedHausNummer?.nr || ''}`
           : undefined
       }
     >
@@ -45,7 +42,7 @@ export function AvailableAppointments({
         <>
           {collectionItemProps.map((props, i) => (
             <div key={i}>
-              <CollectionItem {...props} />
+              <TermineRow {...props} />
               {i < collectionItemProps.length - 1 && <hr />}
             </div>
           ))}

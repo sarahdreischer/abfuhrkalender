@@ -1,17 +1,16 @@
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
 import { HomePage } from '../containers';
 import { regionen } from '../data/regionen';
-import { Ort, Orte } from '../types';
+import { Ort, Orte, Region } from '../types';
 import { fetchData } from '../utils/fetcher';
 
-export async function getServerSideProps({ res }: GetServerSidePropsContext) {
+export async function getServerSideProps({ res, locale }: GetServerSidePropsContext) {
   res.setHeader('Cache-Control', 'public, s-maxage=86400, stale-while-revalidate=59');
 
+  const externalApi = (region: Region) =>
+    `https://${region}-abfallapp.regioit.de/abfall-app-${region}/rest/orte`;
   const getOrte = regionen.map((region) =>
-    fetchData<Ort[]>(
-      `https://${region}-abfallapp.regioit.de/abfall-app-${region}/rest/orte`,
-      'GET',
-    ).then((ortsList) => ({ region, ortsList })),
+    fetchData<Ort[]>(externalApi(region), 'GET').then((ortsList) => ({ region, ortsList })),
   );
 
   const results = await Promise.all(getOrte);

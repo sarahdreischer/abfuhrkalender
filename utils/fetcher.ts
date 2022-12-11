@@ -8,7 +8,6 @@ export async function fetchData<T>(
   body?: any,
   contentType: string = 'application/json',
 ): Promise<T> {
-  console.log('Fetching', Date.now());
   return fetch(url, {
     method,
     body: body ? JSON.stringify(body) : undefined,

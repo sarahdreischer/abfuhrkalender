@@ -1,6 +1,6 @@
 import React from 'react';
-import { AppointmentsPage } from '../containers';
-import { Ort, Orte } from '../types';
+import { TerminePage } from '../containers';
+import { Ort, Orte, Region } from '../types';
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
 import { fetchData } from '../utils/fetcher';
 import { regionen } from '../data/regionen';
@@ -9,11 +9,10 @@ import { useRouter } from 'next/router';
 export async function getServerSideProps({ res }: GetServerSidePropsContext) {
   res.setHeader('Cache-Control', 'public, s-maxage=86400, stale-while-revalidate=59');
 
+  const externalApi = (region: Region) =>
+    `https://${region}-abfallapp.regioit.de/abfall-app-${region}/rest/orte`;
   const getOrte = regionen.map((region) =>
-    fetchData<Ort[]>(
-      `https://${region}-abfallapp.regioit.de/abfall-app-${region}/rest/orte`,
-      'GET',
-    ).then((ortsList) => ({ region, ortsList })),
+    fetchData<Ort[]>(externalApi(region), 'GET').then((ortsList) => ({ region, ortsList })),
   );
 
   const results = await Promise.all(getOrte);
@@ -28,10 +27,8 @@ export async function getServerSideProps({ res }: GetServerSidePropsContext) {
   };
 }
 
-export default function Appointments({
-  orte,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) {
+export default function Termine({ orte }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const router = useRouter();
 
-  return <AppointmentsPage orte={orte} ortId={router.query.ortId as string} />;
+  return <TerminePage orte={orte} ortId={router.query.ortId as string} />;
 }
