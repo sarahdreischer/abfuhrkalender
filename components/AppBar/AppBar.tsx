@@ -13,7 +13,7 @@ export function AppBar({ pages }: AppBarProps) {
   const router = useRouter();
 
   useEffect(() => {
-    const index = pages.findIndex((page) => page.route === router.asPath);
+    const index = pages.findIndex((page) => page.route === router.pathname);
     setActivePageIndex(index);
   }, [router.asPath]);
 
