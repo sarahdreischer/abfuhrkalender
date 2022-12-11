@@ -13,7 +13,7 @@ export function AppBar({ pages }: AppBarProps) {
   const router = useRouter();
 
   useEffect(() => {
-    const index = pages.findIndex((page) => page.route === router.asPath);
+    const index = pages.findIndex((page) => page.route === router.pathname);
     setActivePageIndex(index);
   }, [router.asPath]);
 
@@ -24,7 +24,7 @@ export function AppBar({ pages }: AppBarProps) {
   return (
     <nav className='navbar navbar-expand bg-transparent'>
       <div className='container-fluid'>
-        <a className='navbar-brand' href='#' onClick={onLogoClick}>
+        <a className='navbar-brand text-primary' href='#' onClick={onLogoClick}>
           Abfuhrkalender
         </a>
         <button className='navbar-toggler' type='button' aria-label='Toggle navigation'>

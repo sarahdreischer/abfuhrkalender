@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Datalist } from '../../../components';
+import { Card, Datalist } from '../../../components';
 import { HausNummer, Ort, Strasse } from '../../../types';
 
 interface AppointmentFilter {
@@ -44,7 +44,7 @@ export function AppointmentFilter({
   }
 
   return (
-    <>
+    <Card title='Filter'>
       <div className='mb-2'>
         <Datalist
           value={ortValue}
@@ -84,6 +84,6 @@ export function AppointmentFilter({
           onInputChange={onHausNummerInuptChange}
         />
       </div>
-    </>
+    </Card>
   );
 }

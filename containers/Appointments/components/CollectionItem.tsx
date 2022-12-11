@@ -1,14 +1,14 @@
 import format from 'date-fns/format';
 import { Fraktion } from '../../../types';
-import { TrashIcon } from './TrashIcon';
+import { TrashIcon } from '../icons/TrashIcon';
 
 export interface CollectionItemProps {
   fraktion: Fraktion;
-  date: Date;
+  dates: Date[];
 }
 
-export function CollectionItem({ fraktion, date }: CollectionItemProps) {
-  const formattedDate = format(date, 'dd.MM.yyyy');
+export function CollectionItem({ fraktion, dates }: CollectionItemProps) {
+  const formattedDates = dates.map((date) => format(date, 'dd.MM.yyyy'));
 
   return (
     <>
@@ -20,8 +20,21 @@ export function CollectionItem({ fraktion, date }: CollectionItemProps) {
             {fraktion.name}
           </div>
           <div>
-            <strong>Nächster Abholungstermin: </strong>
-            {formattedDate}
+            {formattedDates.length === 1 && (
+              <>
+                <strong>Nächster Abholungstermin: </strong> {formattedDates[0]}
+              </>
+            )}
+            {formattedDates.length > 1 && (
+              <>
+                <strong>Nächste Abholungstermine:</strong>
+                <ul>
+                  {formattedDates.map((date, i) => (
+                    <li key={i}>{date}</li>
+                  ))}
+                </ul>
+              </>
+            )}
           </div>
         </div>
       </div>

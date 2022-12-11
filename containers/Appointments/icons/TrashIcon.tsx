@@ -17,8 +17,6 @@ export function TrashIcon({ fill, width, height }: TrashIconProps) {
       viewBox='0 0 465.617 465.617'
       width={width}
       height={height}
-      //   style={{ enableBackground: 'enable-background:new 0 0 465.617 465.617;'}}
-      //   xml:space='preserve'
     >
       <g>
         <path
@@ -46,21 +44,6 @@ export function TrashIcon({ fill, width, height }: TrashIconProps) {
           s13.312-29.674,29.675-29.674c16.362,0,29.674,13.312,29.674,29.674S326.844,437.313,310.481,437.313z'
         />
       </g>
-      <g></g>
-      <g></g>
-      <g></g>
-      <g></g>
-      <g></g>
-      <g></g>
-      <g></g>
-      <g></g>
-      <g></g>
-      <g></g>
-      <g></g>
-      <g></g>
-      <g></g>
-      <g></g>
-      <g></g>
     </svg>
   );
 }

@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { Card } from '../../components';
-import { CollectionItem, CollectionItemProps } from './components/CollectionItem';
 import { Fraktion, HausNummer, Ort, Orte, Region, Strasse, Termin } from '../../types';
 import {
   fetchAllFraktionen,
@@ -10,9 +8,10 @@ import {
   fetchTermineFuerHausnummer,
 } from '../../utils/fetcher';
 import { AppointmentFilter } from './components/AppointmentFilter';
-import { getRegionFromOrt, mapTermineToCollectionItemProps } from './utils';
 import cn from 'classnames';
 import styles from './Appointments.module.scss';
+import { AvailableAppointments } from './components/AvailableAppointments';
+import { getRegionFromOrt } from './utils/map-ort-to-region';
 
 interface AppointmentsPageProps {
   orte: Orte;
@@ -29,15 +28,9 @@ export function AppointmentsPage({ orte, ortId: initialOrtId }: AppointmentsPage
   const [ortId, setOrtId] = useState<string | undefined>(initialOrtId);
   const [strasseId, setStrasseId] = useState<string | undefined>();
   const [hausNummerId, setHausNummerId] = useState<string | undefined>();
+  const [loadingAppointments, setLoadingAppointments] = useState<boolean>(false);
 
   const alleOrte: Ort[] = Object.values(orte).flat();
-  const requiredFieldsSelected = ortId && strasseId && hausNummerId;
-  const collectionItemProps: CollectionItemProps[] = mapTermineToCollectionItemProps(
-    termine,
-    fraktionen,
-  );
-  const selectedStreetName = strassen.find(({ id }) => id === strasseId)?.name || '';
-  const selectedHouseNumber = hausNummern.find(({ id }) => id === hausNummerId)?.nr || '';
 
   const getRegion = (id: string) => getRegionFromOrt(id, orte);
 
@@ -67,7 +60,9 @@ export function AppointmentsPage({ orte, ortId: initialOrtId }: AppointmentsPage
 
   useEffect(() => {
     if (region && hausNummerId) {
-      fetchTermineFuerHausnummer(region, hausNummerId).then(setTermine);
+      fetchTermineFuerHausnummer(region, hausNummerId)
+        .then(setTermine)
+        .then(() => setLoadingAppointments(false));
     }
   }, [hausNummerId]);
 
@@ -82,48 +77,27 @@ export function AppointmentsPage({ orte, ortId: initialOrtId }: AppointmentsPage
   return (
     <div className={cn('h-100 w-100 py-5 px-4 container-lg', styles.container)}>
       <div className={cn(styles.sidebar, 'me-3')}>
-        <Card title='Filter'>
-          <AppointmentFilter
-            orte={alleOrte}
-            strassen={strassen}
-            hausNummern={hausNummern}
-            onSelectedOrtId={setOrtId}
-            onSelectedStrassenId={setStrasseId}
-            onSelectedHausNummerId={setHausNummerId}
-            initialOrtValue={alleOrte.find((ort) => ort.id == initialOrtId)?.name}
-          />
-        </Card>
+        <AppointmentFilter
+          orte={alleOrte}
+          strassen={strassen}
+          hausNummern={hausNummern}
+          onSelectedOrtId={setOrtId}
+          onSelectedStrassenId={setStrasseId}
+          onSelectedHausNummerId={(id) => {
+            setLoadingAppointments(id !== undefined);
+            setHausNummerId(id);
+          }}
+          initialOrtValue={alleOrte.find((ort) => ort.id == initialOrtId)?.name}
+        />
       </div>
       <div className='flex-grow-1'>
-        <Card
-          className='overflow-auto'
-          title='Ihre nächsten Abholungstermine'
-          subtitle={
-            requiredFieldsSelected && collectionItemProps.length > 0
-              ? `${selectedStreetName} ${selectedHouseNumber}`
-              : undefined
-          }
-        >
-          {!requiredFieldsSelected && (
-            <div>
-              Bitte wählen Sie <strong>Stadt</strong>, <strong>Straße</strong> und{' '}
-              <strong>Hausnummer</strong> aus
-            </div>
-          )}
-          {requiredFieldsSelected && collectionItemProps.length > 0 && (
-            <>
-              {collectionItemProps.map(({ fraktion, date }, i) => (
-                <div key={i}>
-                  <CollectionItem fraktion={fraktion!} date={date} />
-                  {i < collectionItemProps.length - 1 && <hr />}
-                </div>
-              ))}
-            </>
-          )}
-          {requiredFieldsSelected && collectionItemProps.length === 0 && (
-            <div>Es ist leider kein Termin verfügbar</div>
-          )}
-        </Card>
+        <AvailableAppointments
+          termine={termine}
+          fraktionen={fraktionen}
+          loading={loadingAppointments}
+          selectedStreet={strassen.find(({ id }) => id === strasseId)}
+          selectedHouseNumber={hausNummern.find(({ id }) => id === hausNummerId)}
+        />
       </div>
     </div>
   );
