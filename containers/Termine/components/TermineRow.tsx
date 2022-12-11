@@ -2,12 +2,12 @@ import format from 'date-fns/format';
 import { Fraktion } from '../../../types';
 import { TrashIcon } from '../icons/TrashIcon';
 
-export interface CollectionItemProps {
+export interface TermineRowProps {
   fraktion: Fraktion;
   dates: Date[];
 }
 
-export function CollectionItem({ fraktion, dates }: CollectionItemProps) {
+export function TermineRow({ fraktion, dates }: TermineRowProps) {
   const formattedDates = dates.map((date) => format(date, 'dd.MM.yyyy'));
 
   return (

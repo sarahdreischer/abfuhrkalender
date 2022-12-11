@@ -1,3 +1,2 @@
-export * from './Appointments/Appointments';
-export * from './Home/Home';
-export * from './Layout/Layout';
+export * from './Termine/TerminePage';
+export * from './Home/HomePage';

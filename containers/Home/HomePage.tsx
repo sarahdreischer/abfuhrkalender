@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { Datalist } from '../../components';
 import { Orte } from '../../types';
 import cn from 'classnames';
-import styles from './Home.module.scss';
+import styles from './HomePage.module.scss';
 
 interface HomeProps {
   orte: Orte;
@@ -12,13 +12,14 @@ interface HomeProps {
 export function HomePage({ orte }: HomeProps) {
   const [ortId, setOrtId] = useState<string>();
   const [ortValue, setOrtValue] = useState('');
+
   const router = useRouter();
 
   const alleOrte = Object.values(orte).flat();
 
   function onSearchSubmit() {
     if (ortId) {
-      router.push({ pathname: '/appointments', query: { ortId } });
+      router.push({ pathname: '/termine', query: { ortId } });
     }
   }
 

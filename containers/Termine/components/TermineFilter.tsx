@@ -2,38 +2,38 @@ import { useState } from 'react';
 import { Card, Datalist } from '../../../components';
 import { HausNummer, Ort, Strasse } from '../../../types';
 
-interface AppointmentFilter {
+interface TermineFilterProps {
   orte: Ort[];
   strassen: Strasse[];
   hausNummern: HausNummer[];
-  onSelectedOrtId: (id: string | undefined) => void;
+  onSelectedOrtsId: (id: string | undefined) => void;
   onSelectedStrassenId: (id: string | undefined) => void;
   onSelectedHausNummerId: (id: string | undefined) => void;
-  initialOrtValue?: string;
+  initialOrtsValue?: string;
 }
 
-export function AppointmentFilter({
+export function TermineFilter({
   orte,
   strassen,
   hausNummern,
-  onSelectedOrtId,
+  onSelectedOrtsId,
   onSelectedStrassenId,
   onSelectedHausNummerId,
-  initialOrtValue,
-}: AppointmentFilter) {
-  const [ortValue, setOrtValue] = useState<string>(initialOrtValue || '');
-  const [strasseValue, setStrasseValue] = useState<string>('');
+  initialOrtsValue: initialOrtValue,
+}: TermineFilterProps) {
+  const [ortsValue, setOrtsValue] = useState<string>(initialOrtValue || '');
+  const [strassenValue, setStrassenValue] = useState<string>('');
   const [hausNummerValue, setHausNummerValue] = useState<string>('');
 
-  function onOrtInputChange() {
-    onSelectedOrtId(undefined);
+  function onOrtsInputChange() {
+    onSelectedOrtsId(undefined);
     onSelectedStrassenId(undefined);
     onSelectedHausNummerId(undefined);
-    setStrasseValue('');
+    setStrassenValue('');
     setHausNummerValue('');
   }
 
-  function onStrasseInuptChange() {
+  function onStrassenInuptChange() {
     onSelectedStrassenId(undefined);
     onSelectedHausNummerId(undefined);
     setHausNummerValue('');
@@ -47,19 +47,19 @@ export function AppointmentFilter({
     <Card title='Filter'>
       <div className='mb-2'>
         <Datalist
-          value={ortValue}
-          setValue={setOrtValue}
+          value={ortsValue}
+          setValue={setOrtsValue}
           label='Stadt'
           items={orte.map(({ id, name }) => ({ id, value: name }))}
           required
-          onSelect={onSelectedOrtId}
-          onInputChange={onOrtInputChange}
+          onSelect={onSelectedOrtsId}
+          onInputChange={onOrtsInputChange}
         />
       </div>
       <div className='mb-2'>
         <Datalist
-          value={strasseValue}
-          setValue={setStrasseValue}
+          value={strassenValue}
+          setValue={setStrassenValue}
           label='Straße'
           items={strassen.map(({ id, name }) => ({
             id,
@@ -67,7 +67,7 @@ export function AppointmentFilter({
           }))}
           required
           onSelect={onSelectedStrassenId}
-          onInputChange={onStrasseInuptChange}
+          onInputChange={onStrassenInuptChange}
         />
       </div>
       <div className='mb-2'>

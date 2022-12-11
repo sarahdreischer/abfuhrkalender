@@ -1,17 +1,12 @@
 import React, { ReactElement } from 'react';
-import { AppBar } from '../../components';
-import { Page } from '../../types';
+import { AppBar } from '..';
+import { pages } from '../../data/pages';
 import cn from 'classnames';
 import styles from './Layout.module.scss';
 
 interface LayoutProps {
   children: ReactElement;
 }
-
-const pages: Page[] = [
-  { route: '/', title: 'Home' },
-  { route: '/appointments', title: 'Termine' },
-];
 
 export function Layout({ children }: LayoutProps) {
   return (
