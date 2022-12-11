@@ -28,6 +28,7 @@ export function AppointmentsPage({ orte, ortId: initialOrtId }: AppointmentsPage
   const [ortId, setOrtId] = useState<string | undefined>(initialOrtId);
   const [strasseId, setStrasseId] = useState<string | undefined>();
   const [hausNummerId, setHausNummerId] = useState<string | undefined>();
+  const [loadingAppointments, setLoadingAppointments] = useState<boolean>(false);
 
   const alleOrte: Ort[] = Object.values(orte).flat();
 
@@ -59,7 +60,9 @@ export function AppointmentsPage({ orte, ortId: initialOrtId }: AppointmentsPage
 
   useEffect(() => {
     if (region && hausNummerId) {
-      fetchTermineFuerHausnummer(region, hausNummerId).then(setTermine);
+      fetchTermineFuerHausnummer(region, hausNummerId)
+        .then(setTermine)
+        .then(() => setLoadingAppointments(false));
     }
   }, [hausNummerId]);
 
@@ -80,7 +83,10 @@ export function AppointmentsPage({ orte, ortId: initialOrtId }: AppointmentsPage
           hausNummern={hausNummern}
           onSelectedOrtId={setOrtId}
           onSelectedStrassenId={setStrasseId}
-          onSelectedHausNummerId={setHausNummerId}
+          onSelectedHausNummerId={(id) => {
+            setLoadingAppointments(id !== undefined);
+            setHausNummerId(id);
+          }}
           initialOrtValue={alleOrte.find((ort) => ort.id == initialOrtId)?.name}
         />
       </div>
@@ -88,6 +94,7 @@ export function AppointmentsPage({ orte, ortId: initialOrtId }: AppointmentsPage
         <AvailableAppointments
           termine={termine}
           fraktionen={fraktionen}
+          loading={loadingAppointments}
           selectedStreet={strassen.find(({ id }) => id === strasseId)}
           selectedHouseNumber={hausNummern.find(({ id }) => id === hausNummerId)}
         />

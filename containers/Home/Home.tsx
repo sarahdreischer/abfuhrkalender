@@ -40,7 +40,7 @@ export function HomePage({ orte }: HomeProps) {
             />
           </div>
           <div>
-            <button className='btn btn-outline-success' type='submit' onClick={onSearchSubmit}>
+            <button className='btn btn-outline-secondary' type='submit' onClick={onSearchSubmit}>
               Suchen
             </button>
           </div>
